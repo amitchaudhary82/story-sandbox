@@ -125,7 +125,13 @@ gh issue edit 2 --add-label in-review --remove-label sprint-1   # add and remove
 gh label create in-review                               # new label (random colour)
 gh label list                                           # all labels in the repo
 gh repo view --web                                      # open the repo in the browser
+gh issue close 1 --comment "Test report export done"    # close with a reason
+gh issue reopen 1                                       # reopen (e.g. test failed)
+gh issue list --state all                               # closed stories are hidden by default
 ```
+
+Closing and reopening, with comments, are kept in the story's timeline on GitHub:
+who, when and why – a useful audit trail.
 
 Reading `gh issue view` output: title, `owner/repo#number`, state (Open/Closed),
 comments, labels, body text, link. Board status (Todo / In Progress / Done) is **not**
@@ -192,7 +198,67 @@ gh issue list -s all -L 500 --json number,title,state,updatedAt \
 Think of it like dplyr: `-l` / `-S` are `filter()`, `--json` fields are `select()`,
 and `--jq` is a small `mutate()` / `summarise()` on the result.
 
-## 9. Lessons learned
+## 9. Project boards
+
+### Where a board lives
+
+- A board (project) belongs to an **account or organisation, not to a repo**.
+  Mine: `https://github.com/users/amitchaudhary82/projects/1`
+  (profile picture → **Your projects**, or `gh project view 1 --owner @me --web`).
+- One board can collect stories from **several repos** – like a Jira board over several projects.
+- At work, boards will usually be under the **organisation**: `github.com/orgs/<company>/projects`.
+- `gh project link` connects a board to a repo so it also shows in the repo's **Projects** tab.
+
+### Why `--owner` is always needed
+
+- **Project numbers are only unique per owner.** Every account and every organisation
+  has its own "project 1".
+- Without `--owner`, `gh` asks "Which owner would you like to use?" – fine when typing,
+  but **scripts cannot answer**, so always write `--owner`.
+- `--owner @me` = whoever is logged in (cannot be mistyped). For company boards:
+  `--owner <company-org-name>`.
+- `--owner` takes a **GitHub account name**. `amit` is someone else's account →
+  error "does not have permission to create projects on ownerId …". Mine is `amitchaudhary82`.
+
+### Commands
+
+```bash
+gh project create --owner @me --title "sample dashboard"   # prints URL ending in the number
+gh project list                                            # NUMBER, TITLE, STATE, ID
+gh project view 1 --owner @me --web                        # open board in the browser
+gh project link 1 --owner @me --repo amitchaudhary82/story-sandbox
+gh project item-add 1 --owner @me --url https://github.com/amitchaudhary82/story-sandbox/issues/1
+gh project item-list 1 --owner @me                         # stories on the board and their status
+```
+
+- `item-add` needs the story's full **URL** (last line of `gh issue view 1`), not just its number.
+- `NUMBER` is used in commands; `ID` (`PVT_…`) is GitHub's internal ID and can be ignored.
+
+### Board ≠ sprint: GitHub compared with Jira
+
+Adding a story to a board does **not** put it in a sprint. The project is the backlog;
+sprints, columns and screens are fields and views on it.
+
+| Jira | GitHub |
+|---|---|
+| Backlog | The **project itself** – all stories in it |
+| Sprint | An **Iteration field** on the project (Sprint 1, Sprint 2, with dates) |
+| Board columns | The **Status field** (Todo / In Progress / Done, can add more) |
+| Backlog screen, sprint board | **Views** of the same project, each with its own filter and layout |
+| Epic | A parent issue with **sub-issues** |
+
+Typical setup:
+
+- **One project = the product backlog**, every story on it.
+- **Iteration field** = which sprint; empty means still in the backlog.
+- **"Backlog" view** (table) – stories with no iteration.
+- **"Current sprint" view** (board) – filter `iteration:@current`, columns by Status.
+- The `sprint-1` **label** is only a workaround (no dates, no "current sprint");
+  the Iteration field replaces it.
+- Board **⋯ → Workflows → "Auto-add to project"** puts every new issue of the repo
+  on the board automatically.
+
+## 10. Lessons learned
 
 - **Paste one line at a time** when a command may ask a question (`brew install`,
   `gh auth login`). Otherwise the next lines are taken as answers ("Invalid input").
@@ -206,8 +272,11 @@ and `--jq` is a small `mutate()` / `summarise()` on the result.
   failed). Always check with `gh issue view` after a change.
 - Removing a label that is not on the issue is harmless.
 - Habit: **change, then check.**
+- **Read the error message** – it usually says exactly what is missing,
+  e.g. `required flag(s) "url" not set`.
+- `--owner` is an account name: a wrong one points at someone else's account.
 
-## 10. Saving this document to GitHub
+## 11. Saving this document to GitHub
 
 ```bash
 cd ~/Documents/GitHub/story-sandbox
@@ -219,15 +288,18 @@ git push                                   # upload to GitHub
 
 Every version is kept: on GitHub open SETUP.md → **History**.
 
-## 11. Next steps
+## 12. Next steps
 
 - [x] Install tools, configure Git, log in to GitHub
 - [x] Create sandbox repo, labels and two stories
 - [x] Move repo to `~/Documents/GitHub`
 - [x] Exercises 1–3: view a story, add a label, create a label, add and remove labels
-- [ ] Exercise 4: close story #1 and reopen it (hint: `gh issue --help`)
-- [ ] Exercise 5: create the board, add stories, move cards Todo → In Progress → Done,
-      create an epic with sub-issues, then check status from Terminal
+- [x] Exercise 4: close story #1 and reopen it
+- [x] Exercise 5a: create the board ("sample dashboard", project 1)
+- [ ] Exercise 5b: add stories #1 and #2 to the board, link it to the repo
+- [ ] Exercise 5c: in the browser – Status, Iteration (sprint) field, Backlog and
+      Current sprint views, auto-add workflow
+- [ ] Exercise 5d: create an epic with sub-issues, move cards, check status from Terminal
 - [ ] Update VS Code (Code → Check for Updates); install extensions Python,
       GitHub Copilot, GitHub Pull Requests and Issues
 - [ ] Step 5: Python virtual environment in the repo (`python3 -m venv .venv`, `pip install requests`)
