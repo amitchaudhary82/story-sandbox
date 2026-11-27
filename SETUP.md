@@ -3,6 +3,10 @@
 Personal learning setup for automating product-owner work
 (GitHub stories and labels, later Squash exports and Word test evidence).
 
+> These are the original command-line learning notes. For the RStudio workflow
+> using `httr` directly against GitHub's API (without `gh`), start with
+> [RSTUDIO.md](RSTUDIO.md).
+
 Started: 17 November 2026 · Last updated: 18 November 2026
 
 ---
@@ -59,9 +63,8 @@ gh auth status                # check login
 
 ## 4. Where things live
 
-- **Repo folder on the Mac:** `/Users/amitchaudhary/Documents/GitHub/story-sandbox`
-  (`~` = home folder `/Users/amitchaudhary`). All repos are kept in `~/Documents/GitHub`
-  (the default folder of the GitHub Desktop app).
+- **Repo folder on the Mac:** `~/GitHub/story-sandbox`
+  (`~` = home folder `/Users/amitchaudhary`).
 - **Repo on GitHub:** `amitchaudhary82/story-sandbox` (private)
 - **Stories (issues), labels and the board live only on GitHub**, not in the folder.
   The folder holds files (README.md, SETUP.md, scripts); `gh` commands reach the rest.
@@ -69,13 +72,13 @@ gh auth status                # check login
   GitHub). Show hidden files in Finder with Cmd+Shift+. — never edit inside `.git`.
 
 ```bash
-open ~/Documents/GitHub/story-sandbox                # open the folder in Finder
+open ~/GitHub/story-sandbox                          # open the folder in Finder
 find ~ -maxdepth 4 -name .git -type d 2>/dev/null    # find all repos on the Mac
 git remote -v                                        # which GitHub repo this folder is linked to
 ```
 
 - The repo was first created in `~/dev` and then moved with
-  `mv ~/dev/story-sandbox ~/Documents/GitHub/`. Moving a repo folder is safe:
+  `mv ~/dev/story-sandbox ~/GitHub/`. Moving a repo folder is safe:
   the GitHub link is stored in `.git` and moves with it.
 
 ## 5. Sandbox repo – how it was created
@@ -279,7 +282,7 @@ Typical setup:
 ## 11. Saving this document to GitHub
 
 ```bash
-cd ~/Documents/GitHub/story-sandbox
+cd ~/GitHub/story-sandbox
 code SETUP.md                              # edit in VS Code, save with Cmd+S
 git add SETUP.md                           # choose the file
 git commit -m "Update setup documentation" # save a snapshot with a message
@@ -292,10 +295,12 @@ Every version is kept: on GitHub open SETUP.md → **History**.
 
 - [x] Install tools, configure Git, log in to GitHub
 - [x] Create sandbox repo, labels and two stories
-- [x] Move repo to `~/Documents/GitHub`
+- [x] Move repo to `~/GitHub`
 - [x] Exercises 1–3: view a story, add a label, create a label, add and remove labels
 - [x] Exercise 4: close story #1 and reopen it
 - [x] Exercise 5a: create the board ("sample dashboard", project 1)
+- [x] Add an RStudio starter for listing stories, bulk labels/comments, and
+      manually approved CAB closures — see [RSTUDIO.md](RSTUDIO.md)
 - [ ] Exercise 5b: add stories #1 and #2 to the board, link it to the repo
 - [ ] Exercise 5c: in the browser – Status, Iteration (sprint) field, Backlog and
       Current sprint views, auto-add workflow
